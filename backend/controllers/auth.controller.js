@@ -39,6 +39,7 @@ export const signup=async(req,res)=>{
     console.log("Signup User")
     try {
         const {fullName,username,password,confirmPassword,gender}=req.body
+        // console.log({fullName,username,password,confirmPassword,gender});
         if(password!=confirmPassword){
             return res.status(400).json({error: "Passwords do not match"})
         }
@@ -62,17 +63,21 @@ export const signup=async(req,res)=>{
             password:hashedPassword,
             gender,
             profilePic:gender==="Male"?boyPFP:girlPFP})
+        //console.log(newUser);
         
         if(newUser){
             //generate JWT Token
             generateTokenAndSetCookie(newUser._id,res);
+            //console.log('reached here')
             await newUser.save()
+            console.log('reached here')
             res.status(201).json({
                 _id: newUser.id,
                 fullName: newUser.fullName,
                 username: newUser.username,
                 pfp: newUser.profilePic
             })
+            console.log('reached here')
         }
         else{
             res.status(400).json({error: "Failed to create user, ENTER CORRECT DATA MF"})
@@ -80,5 +85,6 @@ export const signup=async(req,res)=>{
 
     } catch (error) {
         res.status(500).json({error:error.message})
+        console.error(error);
     }
 }
